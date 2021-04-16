@@ -1,8 +1,13 @@
-
 #!/bin/bash
-
-# init centos7
-# by lhm 20200724
+<<!
+ **********************************************************
+ * Author        : lihaimao
+ * Email         : haimao_li@163.com
+ * Last modified : 2021-04-16 09:06
+ * Filename      : init_centos7
+ * Description   :
+ * *******************************************************
+!
 
 . /etc/rc.d/init.d/functions
 
