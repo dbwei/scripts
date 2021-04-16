@@ -17,7 +17,8 @@ logdir=/tmp/tdsql
 CONN="mysql -u$user -p$pass -h$host -P$port"
 
 count=0
-while [ $count -lt 5 ]; do
+$CONN -Bse "UPDATE performance_schema.setup_instruments SET ENABLED = 'YES', TIMED = 'YES' WHERE NAME = 'wait/lock/metadata/sql/mdl';"
+while [ $count -lt 200 ]; do
 
 locks=$(mysql -u$user -p$pass -h$host -P$port -Bse "show global status like 'Innodb_row_lock_current_waits';" | awk '{print $2}')
 echo $locks
@@ -29,10 +30,13 @@ $CONN -Bse "select CONCAT('thread ', b.trx_mysql_thread_id, ' from ', p.host) AS
 echo -e "$(date +%F' '%T)\n" >> $logdir/innodbstatus.log
 $CONN -Bse "show engine innodb status\G" >> $logdir/innodbstatus.log
 echo -e "$(date +%F' '%T)\n" >> $logdir/metadatalocks.log
-$CONN -Bse "select * from performance_schema.metadata_locks;" >> $logdir/metadatalocks.log
+$CONN -Bse "SELECT performance_schema.threads.PROCESSLIST_ID, performance_schema.metadata_locks.* FROM performance_schema.threads, performance_schema.metadata_locks WHERE performance_schema.threads.THREAD_ID = performance_schema.metadata_locks.OWNER_THREAD_ID;" >> $logdir/metadatalocks.log
 echo -e "$(date +%F' '%T)\n" >> $logdir/processlist.log
 $CONN -Bse "select * from information_schema.processlist\G" >> $logdir/processlist.log
-let count=$count+1
 sleep 3;
 fi
+let count=$count+1
 done
+$CONN -Bse "UPDATE performance_schema.setup_instruments SET ENABLED = 'NO', TIMED = 'NO' WHERE NAME = 'wait/lock/metadata/sql/mdl';"
+exit 0
+
