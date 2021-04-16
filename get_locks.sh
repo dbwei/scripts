@@ -15,6 +15,7 @@ port=3306
 logdir=/tmp/tdsql
 CONN="mysql -u$user -p$pass -h$host -P$port"
 count=0
+rm -rf $logdir && mkdir $logdir
 $CONN -Bse "UPDATE performance_schema.setup_instruments SET ENABLED = 'YES', TIMED = 'YES' WHERE NAME = 'wait/lock/metadata/sql/mdl';"
 while [ $count -lt 200 ]; do
 locks=$(mysql -u$user -p$pass -h$host -P$port -Bse "show global status like 'Innodb_row_lock_current_waits';" | awk '{print $2}')
