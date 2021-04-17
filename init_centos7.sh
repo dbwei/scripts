@@ -144,9 +144,9 @@ function install_software() {
 # Synchronization time server.
 function synchronised_time() {
     /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-    ntpdate 10.205.34.171 &>/dev/null && hwclock &>/dev/null
-    sed -i 'N;24aserver 10.205.34.171 iburst' $NTP_CONF
-    sed -i 'N;24aserver 10.205.34.172 iburst' $NTP_CONF
+    ntpdate time1.cloud.tencent.com &>/dev/null && hwclock &>/dev/null
+    sed -i 'N;24aserver time1.cloud.tencent.com iburst' $NTP_CONF
+    sed -i 'N;24aserver time2.cloud.tencent.com iburst' $NTP_CONF
     systemctl restart ntpd
     systemctl enable ntpd &>/dev/null
 }
