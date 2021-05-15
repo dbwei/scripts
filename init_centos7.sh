@@ -164,6 +164,10 @@ net.ipv4.tcp_tw_reuse=1
 net.ipv4.tcp_tw_recycle=0
 EOF
     /sbin/sysctl -p
+cat >> vim /etc/security/limits.conf << EOF
+ulimit -HSn 400000
+EOF
+ulimit -HSn 400000
 }
 
 function init_vim() {
